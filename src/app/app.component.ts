@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {asyncScheduler, fromEvent} from "rxjs";
-import {debounceTime, distinctUntilChanged, pluck, tap, throttleTime} from "rxjs/operators";
+import {auditTime, debounceTime, distinctUntilChanged, pluck, sampleTime, tap, throttleTime} from "rxjs/operators";
 
 @Component({
   selector: 'app-root',
@@ -24,9 +24,10 @@ export class AppComponent implements OnInit{
 
     input$.
       pipe(
-        throttleTime(4000, asyncScheduler,  throttleConfig),
+        // throttleTime(4000, asyncScheduler,  throttleConfig),
+        sampleTime(4000),
         pluck('target', 'value'),
-        distinctUntilChanged(),
+        //distinctUntilChanged(),
         tap(console.log)
       ).subscribe(value => resultBox.innerHTML = value.toString())
   }
