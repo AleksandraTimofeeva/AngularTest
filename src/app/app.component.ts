@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {fromEvent } from "rxjs";
-import {debounceTime, distinctUntilChanged, pluck, tap} from "rxjs/operators";
+import {asyncScheduler, fromEvent} from "rxjs";
+import {debounceTime, distinctUntilChanged, pluck, tap, throttleTime} from "rxjs/operators";
 
 @Component({
   selector: 'app-root',
@@ -11,17 +11,16 @@ export class AppComponent implements OnInit{
   title = 'learn-angular';
 
   ngOnInit(): void {
-    const inputBox = document.getElementById('input');
-    const resultBox = document.getElementById('result');
+    const throttleConfig = {
+      leading: false,
+      trailing: true
+    }
 
-    const input$ = fromEvent(inputBox, 'keyup');
+    const click$ = fromEvent(document, 'click');
 
-    input$.
-      pipe(
-        debounceTime(1000),
-        pluck('target', 'value'),
-        distinctUntilChanged(),
-        tap(console.log)
-      ).subscribe(value => resultBox.innerHTML = value.toString())
+    click$.
+    pipe(
+      throttleTime(2000, asyncScheduler, throttleConfig)
+    ).subscribe(console.log)
   }
 }
