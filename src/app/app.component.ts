@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {fromEvent } from "rxjs";
-import {debounceTime, distinctUntilChanged, pluck, tap} from "rxjs/operators";
+import {asyncScheduler, fromEvent} from "rxjs";
+import {debounceTime, distinctUntilChanged, pluck, tap, throttleTime} from "rxjs/operators";
 
 @Component({
   selector: 'app-root',
@@ -14,11 +14,17 @@ export class AppComponent implements OnInit{
     const inputBox = document.getElementById('input');
     const resultBox = document.getElementById('result');
 
+    // defaultThottleConfig = { leading: true, trailing: false }
+    const throttleConfig = {
+      leading: false,
+      trailing: true
+    }
+
     const input$ = fromEvent(inputBox, 'keyup');
 
     input$.
       pipe(
-        debounceTime(1000),
+        throttleTime(4000, asyncScheduler,  throttleConfig),
         pluck('target', 'value'),
         distinctUntilChanged(),
         tap(console.log)
