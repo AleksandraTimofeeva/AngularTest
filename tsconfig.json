@@ -5,6 +5,8 @@
   To learn more about this file see: https://angular.io/config/solution-tsconfig.
 */
 {
+  "emitDecoratorMetadata": true,
+  "experimentalDecorators": true,
   "files": [],
   "references": [
     {
@@ -13,5 +15,8 @@
     {
       "path": "./tsconfig.spec.json"
     }
-]
+  ],
+  "compilerOptions": {
+    "experimentalDecorators": true
+  }
 }

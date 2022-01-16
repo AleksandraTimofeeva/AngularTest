@@ -1,26 +1,52 @@
 import { Component, OnInit } from '@angular/core';
-import {asyncScheduler, fromEvent} from "rxjs";
-import {debounceTime, distinctUntilChanged, pluck, tap, throttleTime} from "rxjs/operators";
+import { HttpClient } from '@angular/common/http';
+import {Post} from "./post.model";
+import {PostsServise} from "./posts.servise";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit{
-  title = 'learn-angular';
+export class AppComponent implements OnInit {
+  loadedPosts: Post[] = [];
+  isFetching = false;
+  error = null;
+  private errorSub: Subscription;
 
-  ngOnInit(): void {
-    const throttleConfig = {
-      leading: false,
-      trailing: true
-    }
+  constructor(private http: HttpClient, private postsServise: PostsServise) {}
 
-    const click$ = fromEvent(document, 'click');
+  ngOnInit() {
+    // this.errorSub = this.postsServise.error._subscribe(errorMessage => {
+    //   this.error = errorMessage;
+      // return '';
+    // })
+    this.isFetching = true;
+    this.postsServise.fetchPosts().subscribe(posts => {
+      this.isFetching = false;
+      this.loadedPosts = posts;
+      }, error =>  {
+      this.error = error.message;
+    })
+  }
 
-    click$.
-    pipe(
-      throttleTime(2000, asyncScheduler, throttleConfig)
-    ).subscribe(console.log)
+  onCreatePost(postData: Post) {
+    this.postsServise.createAndStorePost(postData.title, postData.content)
+  }
+
+  onFetchPosts() {
+    this.isFetching = true;
+    this.postsServise.fetchPosts().subscribe(posts => {
+      this.isFetching = false;
+      this.loadedPosts = posts;
+    }, error =>  {
+      this.error = error.message;
+    })
+  }
+
+  onClearPosts() {
+   this.postsServise.deletePosts().subscribe(() =>
+   this.loadedPosts = [])
   }
 }
