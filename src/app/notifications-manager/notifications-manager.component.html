@@ -1,9 +1,9 @@
 <div class="notif-manager">
   <div class="notif-manager__count">
-    Notifications Count: {{notificationsCount}}
+    Notifications Count: {{this.getNotification()}}
   </div>
   <div class="notif-manager__actions">
-    <button (click)="addNotification()" class="notif-manager__actions__button">
+    <button id="add" (click)="addNotification()" class="notif-manager__actions__button">
       Add Notification
     </button>
     <button (click)="removeNotification()" class="notif-manager__actions__button">

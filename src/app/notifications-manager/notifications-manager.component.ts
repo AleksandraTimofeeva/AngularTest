@@ -1,4 +1,7 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { NotificationService } from "../notification.service";
+import {pluck} from "rxjs/operators";
+import {fromEvent, Observable, Subscription} from "rxjs";
 
 @Component({
   selector: 'app-notifications-manager',
@@ -7,30 +10,30 @@ import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 })
 export class NotificationsManagerComponent implements OnInit {
 
-  constructor() { }
+  addButton = document.getElementById('add');
+  addButtonObs$: Observable = fromEvent(this.addButton, 'click')
 
-  @Input('notification') notificationsCount: number;
-  @Output() countChange = new EventEmitter<number>();
+  constructor(private notification: NotificationService) {}
 
   ngOnInit(): void {
+    this.notification.getNotificationCount()
+  }
+
+  getNotification() {
+    this.notification.getNotificationCount()
+      .pipe(pluck('target', 'value'))
+      .subscribe()
   }
 
   addNotification() {
-    this.notificationsCount++;
-    this.countChange.emit(this.notificationsCount);
+    this.addButtonObs$ = this.notification.addNotification();
   }
 
   removeNotification() {
-    if (this.notificationsCount == 0) {
-      return;
-    }
-    this.notificationsCount--;
-    this.countChange.emit(this.notificationsCount);
+    this.notification.removeNotification();
   }
 
   resetCount() {
-    this.notificationsCount = 0;
-    this.countChange.emit(0);
+    this.notification.resetCount();
   }
-
 }

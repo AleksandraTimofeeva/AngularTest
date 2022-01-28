@@ -8,14 +8,12 @@
   <span>@Component Inputs and Outputs</span>
   <div class="spacer"></div>
   <div class="notif-bell">
-    <app-notifications-button [notification]="count"></app-notifications-button>
+    <app-notifications-button></app-notifications-button>
   </div>
 </div>
 
 <div class="content" role="main">
-  <app-notifications-manager
-    [notification]="count"
-    (countChange)="updateCount($event)">
+  <app-notifications-manager>
   </app-notifications-manager>
 </div>
 
